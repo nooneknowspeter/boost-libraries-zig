@@ -1,5 +1,11 @@
 const std = @import("std");
 
+const boost_version: std.SemanticVersion = .{
+    .major = 1,
+    .minor = 89,
+    .patch = 0,
+};
+
 const boost_libs = [_][]const u8{
     "core",
     "algorithm",
@@ -121,6 +127,8 @@ const boost_libs = [_][]const u8{
     "parser",
     "mqtt5", // need boost.asio
     "hash2",
+    "tti",
+    "bloom",
 };
 
 pub fn build(b: *std.Build) void {
@@ -163,8 +171,6 @@ const cxxFlags: []const []const u8 = &.{
     "-Wpedantic",
     "-Wformat",
 };
-
-const boost_version: std.SemanticVersion = .{ .major = 1, .minor = 87, .patch = 0 };
 
 pub fn boostLibraries(b: *std.Build, config: Config) *std.Build.Step.Compile {
     const shared = b.option(bool, "shared", "Build as shared library (default: false)") orelse false;

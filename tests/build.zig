@@ -32,8 +32,10 @@ fn buildTests(b: *std.Build, options: struct {
 }) void {
     const exe = b.addExecutable(.{
         .name = options.name,
-        .target = options.target,
-        .optimize = options.optimize,
+        .root_module = b.createModule(.{
+            .target = options.target,
+            .optimize = options.optimize,
+        }),
     });
 
     if (options.dependency) |dep| {

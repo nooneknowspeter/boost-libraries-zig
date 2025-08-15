@@ -2,7 +2,7 @@ const std = @import("std");
 const process = std.process;
 const fmt = std.fmt;
 
-const boost_version = "boost-1.88.0";
+const boost_version = "boost-1.89.0";
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -171,4 +171,6 @@ const git_urls = [_][]const u8{
     "git+https://github.com/boostorg/python#" ++ boost_version,
     "git+https://github.com/boostorg/property_map#" ++ boost_version,
     "git+https://github.com/boostorg/property_map_parallel#" ++ boost_version,
+    "git+https://github.com/boostorg/tti#" ++ boost_version,
+    "git+https://github.com/boostorg/bloom#" ++ boost_version,
 };
