@@ -1,10 +1,5 @@
 const std = @import("std");
-
-const boost_version: std.SemanticVersion = .{
-    .major = 1,
-    .minor = 89,
-    .patch = 0,
-};
+const zon = @import("build.zig.zon");
 
 const boost_libs = [_][]const u8{
     "core",
@@ -131,13 +126,15 @@ const boost_libs = [_][]const u8{
     "bloom",
 };
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
+    const version = try std.SemanticVersion.parse(zon.version);
 
     const boost = boostLibraries(b, .{
         .target = target,
         .optimize = optimize,
+        .boost_version = version,
         .module = .{
             .atomic = b.option(bool, "atomic", "Build boost.atomic library (default: false)") orelse false,
             .charconv = b.option(bool, "charconv", "Build boost.charconv library (default: false)") orelse false,
@@ -182,7 +179,7 @@ pub fn boostLibraries(b: *std.Build, config: Config) *std.Build.Step.Compile {
             .optimize = config.optimize,
         }),
         .linkage = if (shared) .dynamic else .static,
-        .version = boost_version,
+        .version = config.boost_version,
     });
 
     inline for (boost_libs) |name| {
@@ -278,6 +275,7 @@ pub const Config = struct {
     target: std.Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     module: ?boostLibrariesModules = null,
+    boost_version: ?std.SemanticVersion = null,
 };
 
 // No header-only libraries
@@ -1088,7 +1086,7 @@ fn checkSystemLibrary(compile: *std.Build.Step.Compile, name: []const u8) bool {
         }
     }
 
-    const target = compile.rootModuleTarget();
+    const target = &compile.rootModuleTarget();
 
     if (std.zig.target.isLibCLibName(target, name)) {
         return is_linking_libc;
