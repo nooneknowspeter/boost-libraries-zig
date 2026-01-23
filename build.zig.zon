@@ -2,7 +2,7 @@
     .name = .boost_libraries,
     .fingerprint = 0x47452d961c0ab97e,
     .minimum_zig_version = "0.15.1",
-    .version = "1.89.0",
+    .version = "1.60.0",
     .dependencies = .{
         .core = .{
             .url = "git+https://github.com/boostorg/core#boost-1.90.0",
