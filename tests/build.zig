@@ -61,10 +61,10 @@ fn buildTests(b: *std.Build, options: struct {
         });
     }
     if (exe.rootModuleTarget().abi != .msvc) {
-        exe.linkLibCpp();
+        exe.root_module.link_libcpp = true;
         exe.root_module.addCMacro("_GNU_SOURCE", "");
     } else {
-        exe.linkLibC();
+        exe.root_module.link_libc = true;
     }
 
     // for boost::asio/boost::beast/boost::cobalt

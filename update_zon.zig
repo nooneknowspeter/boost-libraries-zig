@@ -2,9 +2,9 @@ const std = @import("std");
 const process = std.process;
 const fmt = std.fmt;
 
-const boost_version = "boost-1.89.0";
+const boost_version = "boost-1.90.0";
 
-pub fn main() !void {
+pub fn main(init: std.process.Init) !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer std.debug.assert(gpa.deinit() == .ok);
@@ -33,8 +33,7 @@ pub fn main() !void {
         };
 
         // Execute command
-        const result = try process.Child.run(.{
-            .allocator = allocator,
+        const result = try process.run(allocator, init.io, .{
             .argv = &args,
         });
         defer allocator.free(result.stderr);
@@ -173,4 +172,5 @@ const git_urls = [_][]const u8{
     "git+https://github.com/boostorg/property_map_parallel#" ++ boost_version,
     "git+https://github.com/boostorg/tti#" ++ boost_version,
     "git+https://github.com/boostorg/bloom#" ++ boost_version,
+    "git+https://github.com/boostorg/openmethod#" ++ boost_version,
 };

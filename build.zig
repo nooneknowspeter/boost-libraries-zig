@@ -124,6 +124,7 @@ const boost_libs = [_][]const u8{
     "hash2",
     "tti",
     "bloom",
+    "openmethod",
 };
 
 pub fn build(b: *std.Build) !void {
@@ -263,10 +264,10 @@ pub fn boostLibraries(b: *std.Build, config: Config) *std.Build.Step.Compile {
         }
     }
     if (lib.rootModuleTarget().abi == .msvc)
-        lib.linkLibC()
+        lib.root_module.link_libc = true
     else {
         lib.root_module.addCMacro("_GNU_SOURCE", "");
-        lib.linkLibCpp();
+        lib.root_module.link_libcpp = true;
     }
     return lib;
 }
@@ -521,7 +522,7 @@ fn buildContext(b: *std.Build, obj: *std.Build.Step.Compile) void {
         .flags = cxxFlags,
     });
 
-    obj.addCSourceFile(.{
+    obj.root_module.addCSourceFile(.{
         .file = switch (obj.rootModuleTarget().os.tag) {
             .windows => .{
                 .cwd_relative = b.pathJoin(&.{ ctxPath, "windows/stack_traits.cpp" }),
@@ -534,7 +535,7 @@ fn buildContext(b: *std.Build, obj: *std.Build.Step.Compile) void {
     });
     if (obj.rootModuleTarget().os.tag == .windows) {
         obj.root_module.addCMacro("BOOST_USE_WINFIB", "");
-        obj.want_lto = false;
+        obj.lto = .thin;
     } else {
         obj.root_module.addCMacro("BOOST_USE_UCONTEXT", "");
     }
@@ -647,7 +648,7 @@ fn buildContext(b: *std.Build, obj: *std.Build.Step.Compile) void {
             obj.root_module.addAssemblyFile(.{ .cwd_relative = b.pathJoin(&.{ ctxPath, "asm/ontop_loongarch64_sysv_elf_gas.S" }) });
         },
         .powerpc => {
-            obj.addCSourceFile(.{
+            obj.root_module.addCSourceFile(.{
                 .file = .{ .cwd_relative = b.pathJoin(&.{ ctxPath, "asm/tail_ontop_ppc32_sysv.cpp" }) },
                 .flags = cxxFlags,
             });
