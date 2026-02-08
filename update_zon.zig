@@ -5,9 +5,7 @@ const fmt = std.fmt;
 const boost_version = "boost-1.90.0";
 
 pub fn main(init: std.process.Init) !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
-    defer std.debug.assert(gpa.deinit() == .ok);
+    const allocator = init.gpa;
 
     for (git_urls) |git_url| {
         // Extract package name from URL
