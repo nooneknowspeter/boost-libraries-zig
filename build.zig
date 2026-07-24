@@ -187,6 +187,14 @@ pub fn boostLibraries(b: *std.Build, config: Config) *std.Build.Step.Compile {
     inline for (boost_libs) |name| {
         const boostLib = b.dependency(name, .{}).path("include");
         lib.root_module.addIncludePath(boostLib);
+        lib.installHeadersDirectory(
+            boostLib,
+            "./include",
+            .{ .include_extensions = &[_][]const u8{
+                ".h",
+                ".hpp",
+            } },
+        );
     }
 
     // zig-pkg bypass (artifact need generate object file)
@@ -1100,3 +1108,4 @@ fn checkSystemLibrary(compile: *std.Build.Step.Compile, name: []const u8) bool {
 
     return false;
 }
+
